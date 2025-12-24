@@ -15,8 +15,7 @@
     "framer-motion": "^11.0.24",
     "buffer": "^6.0.3",
     "bytez.js": "^3.0.0",
-    "@fingerprintjs/fingerprintjs": "3.4.2",
-    "@lottiefiles/dotlottie-react": "0.8.8"
+    "@fingerprintjs/fingerprintjs": "3.4.2"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

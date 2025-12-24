@@ -13,7 +13,6 @@ import GlassCard from './ui/GlassCard';
 import { motion } from 'framer-motion';
 // import CreditDisplay from './CreditDisplay'; // CreditDisplay moved to Navbar and now removed
 import Loader from './ui/Loader'; // Keep Loader as fallback
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const ImageGenerator: React.FC = () => {
   const { user, isAuthenticated, updateUserCredits, loading: authLoading } = useAuth();
@@ -207,13 +206,8 @@ const ImageGenerator: React.FC = () => {
         <div ref={scrollRef} className="mt-12 w-full max-w-6xl animate-fade-in">
           {loading && (
             <div className="flex flex-col items-center justify-center mb-8">
-              {/* Lottie Animation */}
-              <div className="w-64 h-64">
-                <DotLottieReact
-                  src="https://lottie.host/8038b327-0466-4196-856c-03c004456571/9q8q7W7r6P.json" // Placeholder: Replace with your specific Lottie URL
-                  loop
-                  autoplay
-                />
+              <div className="w-64 h-64 flex items-center justify-center">
+                <Loader />
               </div>
               
               <div className="mt-4 text-center space-y-2 text-gray-500 dark:text-gray-400 text-sm font-medium animate-pulse">
