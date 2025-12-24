@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERONIKAextra Images</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0D0D0D', // Dark background for dark mode
+                        secondary: '#F0F0F0', // Light text/elements for dark mode
+                        accent: '#8B5CF6', // A purple accent for highlights
+                        darkBg: '#0D0D0D',
+                        lightBg: '#F8F8F8',
+                        darkText: '#F0F0F0',
+                        lightText: '#1A1A1A',
+                    },
+                    boxShadow: {
+                        'glass-dark': '0 4px 16px 0 rgba(0, 0, 0, 0.20)', // Softer dark shadow
+                        'glass-light': '0 8px 32px 0 rgba(0, 0, 0, 0.05)',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        pulse: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.7' },
+                        },
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' },
+                        },
+                        textGradient: {
+                            '0%, 100%': { 'background-position': '0% 50%' },
+                            '50%': { 'background-position': '100% 50%' },
+                        },
+                        bgCycle: {
+                            '0%': { 'background-size': '200% 200%', 'background-position': '0% 0%' },
+                            '25%': { 'background-size': '200% 200%', 'background-position': '100% 0%' },
+                            '50%': { 'background-size': '200% 200%', 'background-position': '100% 100%' },
+                            '75%': { 'background-size': '200% 200%', 'background-position': '0% 100%' },
+                            '100%': { 'background-size': '200% 200%', 'background-position': '0% 0%' },
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shimmer': 'shimmer 1.5s infinite forwards ease-in-out',
+                        'text-gradient-slow': 'textGradient 3s ease infinite alternate',
+                        'bg-cycle-slow': 'bgCycle 15s ease infinite alternate',
+                    }
+                }
+            }
+        }
+    </script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-darkBg text-darkText dark:bg-lightBg dark:text-lightText transition-colors duration-500 min-h-screen flex flex-col">
+    <div id="root" class="relative min-h-screen">
+        <div class="absolute inset-0 z-0 opacity-10 dark:opacity-5 bg-gradient-to-br from-gray-900 via-gray-800 to-darkBg dark:from-gray-100 dark:via-gray-200 dark:to-lightBg animate-bg-cycle-slow"></div>
+    </div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
