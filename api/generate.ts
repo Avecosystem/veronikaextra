@@ -1,5 +1,4 @@
 // @ts-ignore
-// import Bytez from "bytez.js"; // Removed Bytez usage as it conflicts with A4F key
 import { Buffer } from "buffer";
 
 export default async function handler(req: any, res: any) {
