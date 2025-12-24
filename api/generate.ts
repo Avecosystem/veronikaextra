@@ -48,11 +48,15 @@ export default async function handler(req: any, res: any) {
     }
     
     const cleanKey = key.trim();
-    const preferredModelId = process.env.A4F_MODEL_ID || "provider-4/imagen-3.5";
+    // Force specific model ID if env var is missing or empty, to ensure we use the working one
+    const preferredModelId = (process.env.A4F_MODEL_ID && process.env.A4F_MODEL_ID.length > 0) 
+        ? process.env.A4F_MODEL_ID 
+        : "provider-4/imagen-3.5";
 
     // 5. Run generation (using A4F direct API)
     const count = Math.min(Math.max(1, numberOfImages), 6);
     console.log(`Starting generation for ${count} image(s) using model ${preferredModelId}...`);
+    console.log(`Request details: URL=https://api.a4f.co/v1/images/generations, Key=...${cleanKey.slice(-4)}`);
 
     try {
       const response = await fetch("https://api.a4f.co/v1/images/generations", {
@@ -74,7 +78,7 @@ export default async function handler(req: any, res: any) {
         console.error(`A4F API Error (${response.status}):`, errorText);
         
         if (response.status === 401) {
-             return res.status(401).json({ message: "Unauthorized: Invalid API Key or Model Access" });
+             return res.status(401).json({ message: "A4F Authorization Failed: Please check your API Key and Model permissions." });
         }
         throw new Error(`Provider Error: ${errorText}`);
       }
