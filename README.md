@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="Babecoin-babe-finance-ai (1).png" alt="BabeCoin Logo" width="200"/>
-</p>
+\
 
 # Run and develop locally
 
