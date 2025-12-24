@@ -258,7 +258,11 @@ export const backendApi = {
     }
 
     try {
-      const response = await fetch('/api/generate', {
+      // In production (Vercel/Render), relative path '/api/generate' works because the backend is served from the same domain
+      // If developing locally without a proxy, this might need to be the full URL.
+      const apiUrl = import.meta.env.PROD ? '/api/generate' : 'http://localhost:3000/api/generate';
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
