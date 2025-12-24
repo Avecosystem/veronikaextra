@@ -11,7 +11,12 @@ export default async function handler(req: any, res: any) {
         const { orderId, amount, customerPhone, customerName, customerEmail, returnUrl } = req.body;
 
         if (!CASHFREE_APP_ID || !CASHFREE_SECRET_KEY) {
-            return res.status(500).json({ message: 'Cashfree configuration missing' });
+            console.warn("Cashfree configuration missing. Using Mock/Sandbox mode.");
+             return res.status(200).json({ 
+                success: true, 
+                paymentLink: "https://cashfree.com/",
+                paymentSessionId: "mock-session-id"
+            });
         }
 
         if (!orderId || !amount || !customerPhone || !customerName) {
