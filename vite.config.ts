@@ -10,6 +10,18 @@ export default defineConfig(({ mode }) => {
         host: '0.0.0.0',
       },
       plugins: [react()],
+      build: {
+        chunkSizeWarningLimit: 4000,
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                  react: ['react', 'react-dom'],
+                  router: ['react-router-dom'],
+                  motion: ['framer-motion']
+                }
+            }
+        }
+      },
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
