@@ -44,14 +44,18 @@ export default async function handler(req: any, res: any) {
     const maskedKey = key ? `${String(key).slice(0, 6)}...` : null;
     console.log("A4F key present:", Boolean(key), "key:", maskedKey);
     if (!key) {
+      console.error("Environment check failed: A4F_API_KEY is undefined");
       return res.status(500).json({ message: 'Missing A4F_API_KEY' });
     }
-
+    
+    // Explicitly trim the key to avoid whitespace issues
+    const cleanKey = key.trim();
+    
     // Robust SDK initialization to handle different module loading environments
     let sdk;
     try {
       // Try direct initialization
-      sdk = new Bytez(key);
+      sdk = new Bytez(cleanKey);
     } catch (e) {
       console.warn("Direct Bytez init failed, trying default export fallback...", e);
       // Fallback for CommonJS/ESM interop issues
