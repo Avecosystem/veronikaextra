@@ -63,7 +63,7 @@ export default async function handler(req: any, res: any) {
         // @ts-ignore
         if (Bytez.default) {
           // @ts-ignore
-          sdk = new Bytez.default(key);
+          sdk = new Bytez.default(cleanKey);
         } else {
           throw e;
         }
