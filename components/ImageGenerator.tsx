@@ -211,8 +211,7 @@ const ImageGenerator: React.FC = () => {
               </div>
               
               <div className="mt-4 text-center space-y-2 text-gray-500 dark:text-gray-400 text-sm font-medium animate-pulse">
-                <p className="text-lg font-semibold text-accent">Provisioning hardware...</p>
-                <p>This may take 1 minute, so go grab a coffee and come back :)</p>
+                <p className="text-lg font-semibold text-accent">Creating your masterpiece...</p>
               </div>
             </div>
           )}
