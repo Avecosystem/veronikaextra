@@ -55,7 +55,8 @@ export default async function handler(req: any, res: any) {
         : "provider-4/imagen-3.5";
 
     // 5. Run generation (using A4F direct API)
-    const count = Math.min(Math.max(1, numberOfImages), 6);
+    // Clamp to 4 to match provider rate limits
+    const count = Math.min(Math.max(1, numberOfImages), 4);
     console.log(`Starting generation for ${count} image(s) using model ${preferredModelId}...`);
     console.log(`Request details: URL=https://api.a4f.co/v1/images/generations, Key=...${cleanKey.slice(-4)}`);
 
@@ -78,10 +79,27 @@ export default async function handler(req: any, res: any) {
         const errorText = await response.text();
         console.error(`A4F API Error (${response.status}):`, errorText);
         
+        // Try to parse friendly error message
+        let friendlyMessage = `Provider Error (${response.status})`;
+        try {
+            const errorJson = JSON.parse(errorText);
+            if (errorJson.error && errorJson.error.message) {
+                friendlyMessage = errorJson.error.message;
+            } else if (errorJson.message) {
+                friendlyMessage = errorJson.message;
+            }
+        } catch (e) {
+            // Use raw text if not JSON
+            friendlyMessage += `: ${errorText.slice(0, 100)}`;
+        }
+
         if (response.status === 401) {
              return res.status(401).json({ message: "A4F Authorization Failed: Please check your API Key and Model permissions." });
         }
-        throw new Error(`Provider Error: ${errorText}`);
+        
+        // Return 429 for rate limits, or 500/400 for others, but pass the friendly message
+        const status = response.status === 429 ? 429 : 500;
+        return res.status(status).json({ message: friendlyMessage });
       }
 
       const data = await response.json();

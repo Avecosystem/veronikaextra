@@ -166,7 +166,7 @@ const ImageGenerator: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <span className="text-darkText dark:text-lightText text-lg mr-2">Images:</span>
             <div className="flex flex-wrap justify-center items-center gap-2"> {/* Segmented control for number of images */}
-              {[1, 2, 3, 4, 5, 6].map((num) => (
+              {[1, 2, 3, 4].map((num) => (
                 <Button
                   key={num}
                   variant={numberOfImages === num ? 'primary' : 'outline'}
