@@ -40,18 +40,27 @@ export default async function handler(req: any, res: any) {
         });
 
         const data = await response.json();
+        console.log("Oxapay API Response:", JSON.stringify(data));
 
-        // Check response based on v1 API structure (usually returns 'result': 100 or 'message': 'success')
-        if (data.result === 100 && data.payLink) {
+        // Check for payLink in various locations
+        const payLink = data.payLink || (data.data && data.data.payLink);
+
+        // Check for success indicators
+        // Some APIs return result: 100, others message: "success" or "Operation completed successfully!"
+        const isSuccess = data.result === 100 || 
+                          (data.message && data.message.toLowerCase().includes("success")) ||
+                          (data.message && data.message.toLowerCase().includes("completed"));
+
+        if (isSuccess && payLink) {
             return res.status(200).json({ 
                 success: true, 
-                paymentUrl: data.payLink 
+                paymentUrl: payLink 
             });
-        } else if (data.message === "success" && data.data && data.data.payLink) {
-             // Handle alternative success structure if API varies
+        } else if (payLink) {
+             // If we have a payLink, it's probably a success even if the message is weird
              return res.status(200).json({ 
                 success: true, 
-                paymentUrl: data.data.payLink 
+                paymentUrl: payLink 
             });
         } else {
             console.error("Oxapay API Error:", data);
