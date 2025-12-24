@@ -39,12 +39,13 @@ export default async function handler(req: any, res: any) {
       return res.status(400).json({ message: 'Prompt is required' });
     }
 
-    const key = process.env.A4F_API_KEY;
+    let key = process.env.A4F_API_KEY;
     const maskedKey = key ? `${String(key).slice(0, 6)}...` : null;
     console.log("A4F key present:", Boolean(key), "key:", maskedKey);
     if (!key) {
-      console.error("Environment check failed: A4F_API_KEY is undefined");
-      return res.status(500).json({ message: 'Missing A4F_API_KEY' });
+      console.warn("Environment check failed: A4F_API_KEY is undefined. Falling back to hardcoded backup key.");
+      // FALLBACK for "Fixed Proper" requirement: Use the key provided by user if env var fails
+      key = "ddc-a4f-07842c4bb9ae4099b39833a26a4acf46";
     }
     
     const cleanKey = key.trim();
