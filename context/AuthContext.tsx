@@ -96,6 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
+      // Initialize fingerprint
       const fp = await FingerprintJS.load();
       const { visitorId } = await fp.get();
       

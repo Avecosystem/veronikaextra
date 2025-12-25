@@ -60,66 +60,80 @@ export default async function handler(req: any, res: any) {
     console.log(`Starting generation for ${count} image(s) using model ${preferredModelId}...`);
     console.log(`Request details: URL=https://api.a4f.co/v1/images/generations, Key=...${cleanKey.slice(-4)}`);
 
+    // Helper to generate a single image (or batch if reliable, but parallel is better for variety)
+    // We use parallel requests to ensure variety (different seeds) and avoid provider batch issues
+    const generatePromise = async (idx: number) => {
+        const randomSeed = Math.floor(Math.random() * 1000000000);
+        // Slightly modify prompt with seed or just rely on API's randomness if n=1
+        // Some providers ignore seed if n>1 in batch mode, so we force n=1 per request
+        
+        const response = await fetch("https://api.a4f.co/v1/images/generations", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${cleanKey}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                model: preferredModelId,
+                prompt: prompt,
+                n: 1, // Force 1 per request for variety
+                size: "1024x1024",
+                seed: randomSeed // Send explicit random seed
+            })
+        });
+
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(`API Error (${response.status}): ${text}`);
+        }
+        return response.json();
+    };
+
     try {
-      const response = await fetch("https://api.a4f.co/v1/images/generations", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${cleanKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: preferredModelId,
-          prompt: prompt,
-          n: count,
-          size: "1024x1024" // Default standard size
-        })
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`A4F API Error (${response.status}):`, errorText);
+        // Create an array of promises based on count
+        const promises = Array.from({ length: count }, (_, i) => generatePromise(i));
         
-        // Try to parse friendly error message
-        let friendlyMessage = `Provider Error (${response.status})`;
-        try {
-            const errorJson = JSON.parse(errorText);
-            if (errorJson.error && errorJson.error.message) {
-                friendlyMessage = errorJson.error.message;
-            } else if (errorJson.message) {
-                friendlyMessage = errorJson.message;
+        // Wait for all to complete
+        const results = await Promise.all(promises);
+        
+        // Collect all images from all responses
+        let allImages: any[] = [];
+        results.forEach((data: any) => {
+            if (data.data && Array.isArray(data.data)) {
+                allImages = allImages.concat(data.data);
             }
-        } catch (e) {
-            // Use raw text if not JSON
-            friendlyMessage += `: ${errorText.slice(0, 100)}`;
-        }
+        });
 
-        if (response.status === 401) {
-             return res.status(401).json({ message: "A4F Authorization Failed: Please check your API Key and Model permissions." });
-        }
-        
-        // Return 429 for rate limits, or 500/400 for others, but pass the friendly message
-        const status = response.status === 429 ? 429 : 500;
-        return res.status(status).json({ message: friendlyMessage });
-      }
+        console.log(`Successfully generated ${allImages.length} images via parallel requests.`);
 
-      const data = await response.json();
-      console.log("A4F Response received:", JSON.stringify(data).slice(0, 200));
+        // 6. Process Output
+        const images = allImages.map((item: any, index: number) => {
+            return {
+                id: `img-${Date.now()}-${index}`,
+                url: item.url, 
+                prompt: prompt
+            };
+        });
 
-      // 6. Process Output
-      const images = data.data.map((item: any, index: number) => {
-          return {
-              id: `img-${Date.now()}-${index}`,
-              url: item.url, // A4F returns URLs
-              prompt: prompt
-          };
-      });
-
-      console.log(`Successfully generated ${images.length} images.`);
-      return res.status(200).json({ images });
+        return res.status(200).json({ images });
 
     } catch (apiError: any) {
-       console.error("API Call Failed:", apiError);
-       throw apiError;
+        console.error("API Call Failed:", apiError);
+        
+        // Try to extract meaningful error message
+        let errorMessage = apiError.message || "Failed to generate images";
+        let status = 500;
+        
+        if (errorMessage.includes("401")) {
+             status = 401;
+             errorMessage = "A4F Authorization Failed: Please check your API Key and Model permissions.";
+        } else if (errorMessage.includes("429")) {
+             status = 429;
+             // Rate limit hit
+        }
+
+        // Return clean JSON error
+        return res.status(status).json({ message: errorMessage });
     }
 
   } catch (error: any) {

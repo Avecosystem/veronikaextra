@@ -164,7 +164,7 @@ const ImageGenerator: React.FC = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <span className="text-darkText dark:text-lightText text-lg mr-2">Images:</span>
+            <span className="text-darkText dark:text-lightText text-lg mr-2 font-bold">Image:</span>
             <div className="flex flex-wrap justify-center items-center gap-2"> {/* Segmented control for number of images */}
               {[1, 2, 3, 4].map((num) => (
                 <Button
