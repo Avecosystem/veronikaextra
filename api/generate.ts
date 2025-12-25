@@ -55,8 +55,8 @@ export default async function handler(req: any, res: any) {
         : "provider-4/imagen-3.5";
 
     // 5. Run generation (using A4F direct API)
-    // Clamp to 4 to match provider rate limits
-    const count = Math.min(Math.max(1, numberOfImages), 4);
+    // Clamp to 6 to match updated UI options
+    const count = Math.min(Math.max(1, numberOfImages), 6);
     console.log(`Starting generation for ${count} image(s) using model ${preferredModelId}...`);
     console.log(`Request details: URL=https://api.a4f.co/v1/images/generations, Key=...${cleanKey.slice(-4)}`);
 
@@ -93,16 +93,25 @@ export default async function handler(req: any, res: any) {
         // Create an array of promises based on count
         const promises = Array.from({ length: count }, (_, i) => generatePromise(i));
         
-        // Wait for all to complete
-        const results = await Promise.all(promises);
+        // Wait for all to complete (use allSettled to allow partial success)
+        const results = await Promise.allSettled(promises);
         
-        // Collect all images from all responses
+        // Collect all images from successful responses
         let allImages: any[] = [];
-        results.forEach((data: any) => {
-            if (data.data && Array.isArray(data.data)) {
-                allImages = allImages.concat(data.data);
+        results.forEach((result) => {
+            if (result.status === 'fulfilled') {
+                const data = result.value;
+                if (data.data && Array.isArray(data.data)) {
+                    allImages = allImages.concat(data.data);
+                }
+            } else {
+                console.error("One of the parallel requests failed:", result.reason);
             }
         });
+
+        if (allImages.length === 0) {
+             throw new Error("All image generation requests failed.");
+        }
 
         console.log(`Successfully generated ${allImages.length} images via parallel requests.`);
 
