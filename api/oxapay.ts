@@ -14,27 +14,22 @@ export default async function handler(req: any, res: any) {
         }
 
         const payload = {
+            merchant: API_KEY,
             amount: amount,
             currency: 'USD',
-            lifetime: 30, // 30 minutes
-            fee_paid_by_payer: 1, // 1 = payer pays fee
-            under_paid_coverage: 2.5,
-            to_currency: 'USDT',
-            auto_withdrawal: false,
-            mixed_payment: true,
-            return_url: returnUrl || "https://example.com/success",
-            order_id: orderId,
-            thanks_message: "Thank you for your purchase!",
+            lifeTime: 30,
+            feePaidByPayer: 1,
+            underPaidCoverage: 2.5,
+            returnUrl: returnUrl,
             description: description || `Order #${orderId}`,
-            email: email,
-            sandbox: false // Set to true for testing if needed
+            orderId: orderId,
+            email: email
         };
 
-        const response = await fetch('https://api.oxapay.com/v1/payment/invoice', {
+        const response = await fetch('https://api.oxapay.com/merchants/request', {
             method: 'POST',
             headers: { 
-                'Content-Type': 'application/json',
-                'merchant_api_key': API_KEY 
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(payload)
         });
