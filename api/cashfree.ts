@@ -27,14 +27,14 @@ export default async function handler(req: any, res: any) {
 
         // Cashfree create order payload
         const payload = {
-            order_id: orderId,
-            order_amount: amount,
+            order_id: String(orderId),
+            order_amount: Number(amount),
             order_currency: "INR",
             customer_details: {
-                customer_id: orderId.split('-')[0] || "guest", // Assuming OrderID is format: UserID-Credits-Timestamp
-                customer_name: customerName,
-                customer_email: customerEmail,
-                customer_phone: customerPhone
+                customer_id: String(orderId.split('-')[0] || "guest"), 
+                customer_name: String(customerName).replace(/[^a-zA-Z0-9 ]/g, ""), // Sanitize name
+                customer_email: String(customerEmail),
+                customer_phone: String(customerPhone)
             },
             order_meta: {
                 return_url: returnUrl
@@ -52,7 +52,18 @@ export default async function handler(req: any, res: any) {
             body: JSON.stringify(payload)
         });
 
-        const data = await response.json();
+        let data;
+        try {
+            data = await response.json();
+        } catch (e) {
+             const text = await response.text();
+             console.error("Non-JSON response from Cashfree:", text);
+             return res.status(400).json({
+                 success: false,
+                 message: `Cashfree returned invalid JSON: ${text.substring(0, 100)}`,
+                 payload: payload // Return payload for debugging
+             });
+        }
 
         if (response.ok && data.payment_link) {
             return res.status(200).json({ 
@@ -64,7 +75,8 @@ export default async function handler(req: any, res: any) {
             console.error("Cashfree API Error:", data);
             return res.status(400).json({ 
                 success: false, 
-                message: data.message || "Failed to initiate Cashfree payment" 
+                message: data.message || JSON.stringify(data) || "Failed to initiate Cashfree payment",
+                payload: payload // Return payload for debugging
             });
         }
 
