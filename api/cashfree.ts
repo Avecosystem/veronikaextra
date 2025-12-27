@@ -2,7 +2,7 @@ const CASHFREE_APP_ID = process.env.CASHFREE_APP_ID || ('11396680fc7bc26136047b8
 const SECRET_PART_1 = 'cfsk_ma_prod_';
 const SECRET_PART_2 = '555987122a9e75436f20c07db840cab8_f554aaa8';
 const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY || (SECRET_PART_1 + SECRET_PART_2);
-const CASHFREE_API_VERSION = process.env.CASHFREE_API_VERSION || '2022-09-01';
+const CASHFREE_API_VERSION = process.env.CASHFREE_API_VERSION || '2023-08-01';
 
 export default async function handler(req: any, res: any) {
     if (req.method !== 'POST') {
