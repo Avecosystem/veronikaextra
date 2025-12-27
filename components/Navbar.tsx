@@ -143,7 +143,7 @@ const Navbar: React.FC = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed inset-y-0 right-0 w-3/4 max-w-sm bg-gray-900 dark:bg-black shadow-2xl z-50 md:hidden overflow-y-auto border-l border-gray-800"
+              className="fixed inset-y-0 right-0 w-3/4 max-w-sm bg-black shadow-2xl z-50 md:hidden overflow-y-auto border-l border-gray-800"
             >
               <div className="flex flex-col p-6 space-y-6">
                 <div className="flex justify-end">
@@ -169,7 +169,7 @@ const Navbar: React.FC = () => {
                         to={link.path}
                         className={({ isActive }) => 
                           `text-lg font-medium px-4 py-2 rounded-lg transition-colors duration-200 ${
-                            isActive ? 'text-accent bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                            isActive ? 'text-accent bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-900'
                           }`
                         }
                         onClick={toggleMobileMenu}
@@ -185,7 +185,7 @@ const Navbar: React.FC = () => {
                         to="/profile"
                         className={({ isActive }) => 
                           `text-lg font-medium px-4 py-2 rounded-lg transition-colors duration-200 ${
-                            isActive ? 'text-accent bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                            isActive ? 'text-accent bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-900'
                           }`
                         }
                         onClick={toggleMobileMenu}
@@ -196,7 +196,7 @@ const Navbar: React.FC = () => {
                         to="/my-payments"
                         className={({ isActive }) => 
                           `text-lg font-medium px-4 py-2 rounded-lg transition-colors duration-200 ${
-                            isActive ? 'text-accent bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                            isActive ? 'text-accent bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-900'
                           }`
                         }
                         onClick={toggleMobileMenu}
@@ -210,14 +210,14 @@ const Navbar: React.FC = () => {
                           </div>
                           <NavLink
                             to="/admin/dashboard"
-                            className="text-lg font-medium px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-colors duration-200"
+                            className="text-lg font-medium px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-900 transition-colors duration-200"
                             onClick={toggleMobileMenu}
                           >
                             Dashboard
                           </NavLink>
                           <NavLink
                             to="/admin/credit-plans"
-                            className="text-lg font-medium px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-colors duration-200"
+                            className="text-lg font-medium px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-900 transition-colors duration-200"
                             onClick={toggleMobileMenu}
                           >
                             Credit Plans
