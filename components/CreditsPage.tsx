@@ -119,9 +119,23 @@ const CreditsPage: React.FC = () => {
             returnUrl
         );
 
-        if (response.success && response.data.paymentLink) {
-            // Automatic redirection to Cashfree gateway
-            window.location.href = response.data.paymentLink;
+        if (response.success) {
+            if (response.data.paymentLink) {
+                // Automatic redirection to Cashfree gateway via Link
+                window.location.href = response.data.paymentLink;
+            } else if (response.data.paymentSessionId) {
+                // Initialize Cashfree SDK for seamless redirection
+                // @ts-ignore
+                const cashfree = new window.Cashfree({ mode: "production" });
+                cashfree.checkout({
+                    paymentSessionId: response.data.paymentSessionId,
+                    returnUrl: returnUrl,
+                    redirectTarget: "_self" // Redirects the same tab
+                });
+            } else {
+                 setError("Payment initialized but no link received. Please try again.");
+                 setRedirecting(false);
+            }
         } else {
             setError(response.message || "Payment gateway connection failed.");
             setRedirecting(false);

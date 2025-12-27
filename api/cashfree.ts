@@ -65,7 +65,8 @@ export default async function handler(req: any, res: any) {
              });
         }
 
-        if (response.ok && data.payment_link) {
+        // Cashfree might return payment_link OR payment_session_id
+        if (response.ok && (data.payment_link || data.payment_session_id)) {
             return res.status(200).json({ 
                 success: true, 
                 paymentLink: data.payment_link,
