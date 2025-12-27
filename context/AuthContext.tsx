@@ -4,7 +4,7 @@ import React, { createContext, useState, useEffect, useCallback, ReactNode } fro
 import { User, AuthContextType, ApiResponse } from '../types';
 import { backendApi } from '../services/backendApi';
 import { useNavigate } from 'react-router-dom';
-import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import { load } from '@fingerprintjs/fingerprintjs';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -97,7 +97,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
     try {
       // Initialize fingerprint
-      const fp = await FingerprintJS.load();
+      const fp = await load();
       const { visitorId } = await fp.get();
       
       const response: ApiResponse<User> = await backendApi.register(name, email, password, country, visitorId);
