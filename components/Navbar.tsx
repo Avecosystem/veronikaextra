@@ -182,6 +182,19 @@ const Navbar: React.FC = () => {
                   <div className="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                     Navigation
                   </div>
+                  <NavLink
+                    to="/"
+                    className={({ isActive }) => 
+                      `flex items-center px-4 py-3 rounded-lg transition-colors duration-200 text-sm font-medium ${
+                        isActive 
+                          ? 'bg-gray-900 text-accent border border-gray-800' 
+                          : 'text-gray-300 hover:text-white hover:bg-gray-900'
+                      }`
+                    }
+                    onClick={toggleMobileMenu}
+                  >
+                    Home
+                  </NavLink>
                   {navLinks.map((link) => {
                     if (link.authenticated && !isAuthenticated) return null;
                     return (
