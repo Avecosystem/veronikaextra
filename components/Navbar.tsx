@@ -126,81 +126,130 @@ const Navbar: React.FC = () => {
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed inset-0 bg-darkBg/70 dark:bg-lightBg/70 z-40 backdrop-blur-sm md:hidden"
-          >
-            <GlassCard className="absolute top-16 right-4 p-6 w-11/12 max-w-xs space-y-4 flex flex-col items-center">
-              {isAuthenticated && <CreditDisplay />} {/* Display credits in mobile menu */}
-              {navLinks.map((link) => {
-                if (link.authenticated && !isAuthenticated) return null;
-                return (
-                  <NavLink
-                    key={link.name}
-                    to={link.path}
-                    className="w-full text-center py-2 text-lg text-darkText dark:text-lightText hover:text-accent dark:hover:text-accent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent rounded-md"
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+              onClick={toggleMobileMenu}
+            />
+            
+            {/* Sidebar */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="fixed inset-y-0 right-0 w-3/4 max-w-sm bg-gray-900 dark:bg-black shadow-2xl z-50 md:hidden overflow-y-auto border-l border-gray-800"
+            >
+              <div className="flex flex-col p-6 space-y-6">
+                <div className="flex justify-end">
+                  <button
                     onClick={toggleMobileMenu}
+                    className="text-gray-400 hover:text-white transition-colors focus:outline-none p-2 rounded-full hover:bg-gray-800"
                   >
-                    {link.name}
-                  </NavLink>
-                );
-              })}
-              {isAuthenticated && (
-                <>
-                  <NavLink
-                    to="/profile"
-                    className="w-full text-center py-2 text-lg text-darkText dark:text-lightText hover:text-accent dark:hover:text-accent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent rounded-md"
-                    onClick={toggleMobileMenu}
-                  >
-                    Profile
-                  </NavLink>
-                  <NavLink
-                    to="/my-payments"
-                    className="w-full text-center py-2 text-lg text-darkText dark:text-lightText hover:text-accent dark:hover:text-accent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent rounded-md"
-                    onClick={toggleMobileMenu}
-                  >
-                    My Payments
-                  </NavLink>
-                  {user?.isAdmin && (
+                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <div className="flex flex-col space-y-4">
+                  {isAuthenticated && <div className="px-2"><CreditDisplay /></div>}
+                  
+                  {/* Navigation Links */}
+                  {navLinks.map((link) => {
+                    if (link.authenticated && !isAuthenticated) return null;
+                    return (
+                      <NavLink
+                        key={link.name}
+                        to={link.path}
+                        className={({ isActive }) => 
+                          `text-lg font-medium px-4 py-2 rounded-lg transition-colors duration-200 ${
+                            isActive ? 'text-accent bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                          }`
+                        }
+                        onClick={toggleMobileMenu}
+                      >
+                        {link.name}
+                      </NavLink>
+                    );
+                  })}
+
+                  {isAuthenticated && (
                     <>
                       <NavLink
-                        to="/admin/dashboard"
-                        className="w-full text-center py-2 text-lg text-darkText dark:text-lightText hover:text-accent dark:hover:text-accent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent rounded-md"
+                        to="/profile"
+                        className={({ isActive }) => 
+                          `text-lg font-medium px-4 py-2 rounded-lg transition-colors duration-200 ${
+                            isActive ? 'text-accent bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                          }`
+                        }
                         onClick={toggleMobileMenu}
                       >
-                        Admin Dashboard
+                        Profile
                       </NavLink>
                       <NavLink
-                        to="/admin/credit-plans"
-                        className="w-full text-center py-2 text-lg text-darkText dark:text-lightText hover:text-accent dark:hover:text-accent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent rounded-md"
+                        to="/my-payments"
+                        className={({ isActive }) => 
+                          `text-lg font-medium px-4 py-2 rounded-lg transition-colors duration-200 ${
+                            isActive ? 'text-accent bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                          }`
+                        }
                         onClick={toggleMobileMenu}
                       >
-                        Credit Plans
+                        My Payments
                       </NavLink>
+                      {user?.isAdmin && (
+                        <>
+                          <div className="pt-4 pb-2 px-4 text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                            Admin
+                          </div>
+                          <NavLink
+                            to="/admin/dashboard"
+                            className="text-lg font-medium px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-colors duration-200"
+                            onClick={toggleMobileMenu}
+                          >
+                            Dashboard
+                          </NavLink>
+                          <NavLink
+                            to="/admin/credit-plans"
+                            className="text-lg font-medium px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-colors duration-200"
+                            onClick={toggleMobileMenu}
+                          >
+                            Credit Plans
+                          </NavLink>
+                        </>
+                      )}
                     </>
                   )}
-                </>
-              )}
-              <div className="w-full h-px bg-gray-700 dark:bg-gray-300 my-2"></div>
-              {isAuthenticated ? (
-                 <>
-                  <div className="w-full flex justify-center py-2">
-                    <ThemeToggle />
-                  </div>
-                  <Button variant="secondary" size="md" className="w-full" onClick={handleLogout} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    Logout
-                  </Button>
-                 </>
-              ) : (
-                <Button variant="outline" size="md" className="w-full" onClick={handleLogin} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  Login
-                </Button>
-              )}
-            </GlassCard>
-          </motion.div>
+                </div>
+
+                <div className="pt-6 border-t border-gray-800 mt-auto">
+                  {isAuthenticated ? (
+                     <div className="flex flex-col space-y-4 px-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-300 font-medium">Theme</span>
+                          <ThemeToggle />
+                        </div>
+                        <Button variant="secondary" size="lg" className="w-full justify-center mt-4" onClick={handleLogout}>
+                          Logout
+                        </Button>
+                     </div>
+                  ) : (
+                    <div className="px-2">
+                      <Button variant="primary" size="lg" className="w-full justify-center" onClick={handleLogin}>
+                        Login
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </nav>
